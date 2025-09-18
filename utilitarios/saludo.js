@@ -1,18 +1,23 @@
 saludar = function(){
-let nombre;
-let apellido;
-nombre=recuperarTexto("txtNombre");
-apellido=recuperarTexto("txtApellido");
-
-
+let nombre=recuperarTexto("txtNombre");
+let apellido=recuperarTexto("txtApellido");
+let edad=recuperarInt("txtEdad");
+let estatura=recuperarFloat("txtEstatura");
 }
 
 recuperarTexto = function(idComponente){
-    let componete;
-    let valorIngresado;
-    componete=document.getElementById(idComponente);
-    valorIngresado=componete.value;
+   let componete=document.getElementById(idComponente);
+   let valorIngresado=componete.value;
     return valorIngresado;
 }
-
+recuperarInt = function(idComponente){
+    let valorCaja =document.getElementById(idComponente).value;
+    let valorEntero = parseInt(valorCaja);
+    return valorEntero;
+}
+recuperarFloat = function(idComponente){
+    let valorCaja =document.getElementById(idComponente).value;
+    let valorFlotante = parseFloat(valorCaja);
+    return valorFlotante;
+}
 
