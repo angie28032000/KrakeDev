@@ -5,6 +5,8 @@ let edad=recuperarInt("txtEdad");
 let estatura=recuperarFloat("txtEstatura");
 let mesajeBienvenida="Bienvenido " + nombre + " " + apellido ;
 mostrarTexto("lblResultado",mesajeBienvenida);
+mostrarImagen("imgSaludo","./imagenes/saludo.gif");
+
 }
 
 recuperarTexto = function(idComponente){
@@ -25,5 +27,9 @@ recuperarFloat = function(idComponente){
 mostrarTexto = function(idComponente,mensaje){
     let componete =document.getElementById(idComponente);
     componete.innerText=mensaje;
+}
+mostrarImagen = function(idComponente,rutaImagen){
+    let componete = document.getElementById(idComponente);
+    componete.src=rutaImagen;
 }
 
