@@ -6,6 +6,7 @@ let estatura=recuperarFloat("txtEstatura");
 let mesajeBienvenida="Bienvenido " + nombre + " " + apellido ;
 mostrarTexto("lblResultado",mesajeBienvenida);
 mostrarImagen("imgSaludo","./imagenes/saludo.gif");
+mostrarTextoEnCaja("txtNombre","");
 
 }
 
@@ -27,6 +28,11 @@ recuperarFloat = function(idComponente){
 mostrarTexto = function(idComponente,mensaje){
     let componete =document.getElementById(idComponente);
     componete.innerText=mensaje;
+}
+mostrarTextoEnCaja = function(idComponente,mensaje){
+    let componete = document.getElementById(idComponente);
+    componete.value =mensaje;
+
 }
 mostrarImagen = function(idComponente,rutaImagen){
     let componete = document.getElementById(idComponente);
