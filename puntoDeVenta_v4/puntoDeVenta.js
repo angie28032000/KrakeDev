@@ -67,6 +67,7 @@ calcularValorTotal = function () {
      mostrarTexto("lblValorIVA",valorIVA.toFixed(3));
     
     //10. Invocar a calcularTotal y lo que devuelve guardar en la variable valorTotal
+    valorTotal = calcularTotal (valorSubtotal,valorDescuento,valorIVA);
     //11. Mostrar el resultado en el componente lblTotal
     /*
         Caso de prueba: 
@@ -82,13 +83,16 @@ calcularValorTotal = function () {
 
                 Si el caso de prueba es exitoso, hacer un commit
        */
-            
+    mostrarTexto("lblTotal",valorTotal).toFixed(3);
     //12. Mostrar un resumen en el componente lblResumen, si no existe debe agregarlo
     /*
         Ejemplo: 
             Valor a pagar por 20 cerveza corona con 10% de descuento: USD 48.75
         Si funciona, hacer un commit
     */
+   let producto =(nombreProducto);
+   let cantidadp =(cantidad);
+   lblResumen.innerText = "El valor a pagar por " +cantidadp+ " " +producto+ " con % " +porcentajeDescuento+ " de descuento es : USD " +valorTotal;
 
 }
 limpiar = function () {
@@ -97,5 +101,16 @@ limpiar = function () {
         Dejar todos los textos de los montos con el valor 0.0
         Si funciona, hacer un commit
      */
+    document.getElementById("txtProducto").value = "";
+    document.getElementById("txtCantidad").value = "";
+    document.getElementById("txtPrecio").value = "";
+    document.getElementById("txtPorcentajeDescuento").value = "";
+
+    mostrarTexto("lblSubtotal", "0.0");
+    mostrarTexto("lblDescuento", "0.0");
+    mostrarTexto("lblValorIVA", "0.0");
+    mostrarTexto("lblTotal", "0.0");
+
+    
 }
 /* SI TODO FUNCIONA, HACER UN PUSH */
