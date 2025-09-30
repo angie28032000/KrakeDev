@@ -29,5 +29,18 @@ function guardarPalabra() {
     console.log("Palabra guardada correctamente:", palabraSecreta);
 }
 
+mostrarLetra = function(letra,posicion){
+    let idDiv = "div" + posicion;
+    let div = document.getElementById(idDiv);
+    if(!div){
+        console.error("No existe el div con id:",idDiv);
+        return;
+    }
+    div.innerText=letra;
+
+    
+
+}
+
 
 
