@@ -59,6 +59,35 @@ ejecutarNuevo = function () {
 
     esNuevo = true;
 }
+ejecutarBusqueda = function () {
+    let cedulaBuscar = recuperarTexto("txtBusquedaCedula");
+    let empleado = buscarEmpleados(cedulaBuscar);
+
+    if (empleado == null) {
+        alert("EMPLEADO NO EXISTE");
+    } else {
+
+        mostrarTextoEnCaja("txtCedula", empleado.cedula);
+        mostrarTextoEnCaja("txtNombre", empleado.nombre);
+        mostrarTextoEnCaja("txtApellido", empleado.apellido);
+        mostrarTextoEnCaja("txtSueldo", empleado.sueldo);
+
+
+        habilitarComponente("txtNombre");
+        habilitarComponente("txtApellido");
+        habilitarComponente("txtSueldo");
+        habilitarComponente("btnGuardar");
+
+
+        deshabilitarComponente("txtCedula");
+
+        esNuevo = false;
+    }
+}
+
+
+
+
 
 buscarEmpleados = function (cedula) {
     for (let i = 0; i < empleados.length; i++) {
@@ -139,6 +168,29 @@ guardar = function () {
             alert(" YA EXISTE UN EMPLEADO CON LA CEDULA " + cedula);
         }
     } else {
-        alert("Funcionalidad de modificacion aun no implementada.");
+        let empleado = buscarEmpleados(document.getElementById("txtCedula").value);
+        if (empleado != null) {
+            empleado.nombre = recuperarTexto("txtNombre");
+            empleado.apellido = recuperarTexto("txtApellido");
+            empleado.sueldo = recuperarFloat("txtSueldo");
+
+            alert("EMPLEADO MODIFICADO EXITOSAMENTE");
+
+            mostrarEmpleados();
+            condicionesIniciales();
+        }
     }
 }
+
+limpiar = function () {
+    mostrarTextoEnCaja("txtBusquedaCedula", "");
+    mostrarTextoEnCaja("txtCedula", "");
+    mostrarTextoEnCaja("txtNombre", "");
+    mostrarTextoEnCaja("txtApellido", "");
+    mostrarTextoEnCaja("txtSueldo", "");
+
+    esNuevo = false;
+
+    condicionesIniciales();
+}
+
