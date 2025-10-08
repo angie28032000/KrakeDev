@@ -22,6 +22,19 @@ mostrarEmpleados = function () {
 
 }
 
+buscarPorRol = function () {
+    let rol = recuperarTexto("txtRol");
+    let empleado = buscarEmpleado(rol);
+
+    if (empleado != null) {
+        mostrarTexto("divNombre", empleado.nombre + " " + empleado.apellido);
+        mostrarTexto("divSueldo", empleado.sueldo);
+        mostrarTexto("divSaldo", empleado.saldo);
+    } else {
+        alert("Empleado no encontrado");
+    }
+};
+
 mostrarOpcionEmpleado = function () {
     mostrarComponente("divEmpleado");
     ocultarComponente("divRol");
@@ -85,6 +98,27 @@ ejecutarBusqueda = function () {
     }
 }
 
+calcularRol = function () {
+
+    let sueldo = recuperarFloat("txtSueldo");
+    let descuento = recuperarFloat("txtDescuento");
+
+    if (isNaN(sueldo) || sueldo <= 0) {
+        alert("Debe ingresar un sueldo válido mayor que 0.");
+        return;
+    }
+
+    if (isNaN(descuento) || descuento < 0 || descuento > sueldo) {
+        alert("El descuento debe ser un número mayor o igual a 0 y menor o igual al sueldo.");
+        return;
+    }
+
+    let aporteIess = calcularAporteEmpleado(sueldo);
+    mostrarTexto("infoIESS", aporteIess.toFixed(2));
+
+    let valorPagar = calcularValorAPagar(sueldo, aporteIess, descuento);
+    mostrarTexto("infoPago", valorPagar.toFixed(2));
+}
 
 
 
@@ -193,4 +227,14 @@ limpiar = function () {
 
     condicionesIniciales();
 }
+
+calcularAporteEmpleado = function (sueldo) {
+    let aporte = sueldo * 0.0945;
+    return aporte;
+};
+
+calcularValorAPagar = function (sueldo, aporteIess, descuento) {
+    let valorPagar = sueldo - aporteIess - descuento;
+    return valorPagar;
+};
 

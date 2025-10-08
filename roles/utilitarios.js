@@ -51,3 +51,18 @@ habilitarComponente = function(idComponente){
     document.getElementById(idComponente).disabled = false;
 }
 
+recuperarTextoDiv = function(idComponente){
+    let componente = document.getElementById(idComponente);
+    let valor = componente.textContent;
+    return valor;
+};
+
+recuperarFloatDiv = function(idComponente){
+    let valor = recuperarTextoDiv(idComponente);
+    return parseFloat(valor);
+};
+
+recuperarIntDiv = function(idComponente){
+    let valor = recuperarTextoDiv(idComponente);
+    return parseInt(valor);
+};
