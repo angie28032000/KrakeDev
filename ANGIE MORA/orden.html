@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <link rel="stylesheet" href="order.css">
+
+
+</head>
+
+<body onload="mostrarPersonaMayor()">
+    <div id="resultado"></div>
+    <div class="contenedor">
+
+        <h2>AGREGAR PERSONAS</h2>
+        <div class="campo">
+            <label>Nombre</label>
+            <input type="text" id="txtNombre">
+            <div id="errorNombre" class="error"></div>
+        </div>
+        <div class="campo">
+            <label>Edad</label>
+            <input type="text" id="txtEdad">
+            <div id="errorEdad" class="error"></div>
+        </div>
+        <div class="contenedor">
+        <h2>Listado de personas</h2>
+        <div id="tablaPersonas"></div>
+
+        <hr>
+        <button type="button" class="boton" onclick="agregarPersonas();">GUARDAR</button>
+        <div id="mensajeFinal" class="mensaje"></div>
+
+        <button type="button" class="boton" onclick="determinarMayor()">ENCONTRAR MAYOR</button>
+        <div id="resultadoMayor" class="resultado"></div>
+
+        <button type="button" class="boton" onclick="determinarMenor()">ENCONTRAR MENOR</button>
+        <div id="resultadoMenor" class="resultado"></div>
+    </div>
+
+        
+    
+    </div>
+
+    <script src="utilitarios.js"></script>
+    <script src="order.js"></script>
+</body>
+
+
+</html>

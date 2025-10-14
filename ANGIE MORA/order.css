@@ -1,0 +1,53 @@
+ body {
+     font-family: Arial;
+     background-color: #f9f9f9;
+ }
+
+ .campo {
+     margin-bottom: 10px;
+ }
+
+ .error {
+     color: red;
+     font-size: 14px;
+ }
+
+ .boton {
+     background-color: #4CAF50;
+     color: white;
+     padding: 8px 15px;
+     border: none;
+     cursor: pointer;
+ }
+
+ .boton:hover {
+
+     background-color: #45a049;
+
+ }
+
+ .tabla-personas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabla-personas th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px;
+    text-align: left;
+}
+
+.tabla-personas td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tabla-personas tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tabla-personas tr:hover {
+    background-color: #ddd;
+}
