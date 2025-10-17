@@ -22,7 +22,7 @@ validarPassword=function(password) {
         errores += "La contraseña debe contener al menos una letra mayúscula.\n";
     }
 
-    // Validar dígito
+   
     let tieneDigito = false;
     for (let i = 0; i < password.length; i++) {
         let caracter = password.charAt(i);
