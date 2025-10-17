@@ -1,0 +1,592 @@
+// ============================================================
+// roles.js (archivo documentado) - Gestión de empleados y roles
+// Propósito: manejar empleados, calcular aportes y generar roles
+// ============================================================
+
+// ------------------------------------------------------------
+// Inicialización de variables globales
+// ------------------------------------------------------------
+// Si la variable `empleados` no existe (por ejemplo definida en otro archivo),
+// la inicializamos como arreglo vacío para evitar errores.
+if (typeof empleados === 'undefined') { var empleados = []; }
+
+// `roles` almacenará los roles (resumen de salarios y aportes) que se generen.
+let roles = [];
+
+// `esNuevo` indica si el formulario de empleado está en modo "nuevo" (true)
+// o en modo "edición" (false). Se usa al guardar para decidir crear o modificar.
+let esNuevo = false;
+
+
+
+/* ====================== EMPLEADOS ====================== */
+
+/* mostrarEmpleados()
+   - Construye una tabla HTML con los empleados actuales (cédula, nombre, apellido, sueldo).
+   - Inserta esa tabla en el elemento del DOM con id "tablaEmpleados".
+   - Si el elemento no existe, no hace nada (evita errores).
+*/
+mostrarEmpleados = function () {
+    // Creación inicial del string HTML para la tabla
+    let tabla = "<table border='1' class='tablaEmpleados'>";
+    tabla += "<tr><th>CEDULA</th><th>NOMBRE</th><th>APELLIDO</th><th>SUELDO</th></tr>";
+
+    // Recorre el arreglo `empleados` y agrega una fila por empleado
+    for (let i = 0; i < empleados.length; i++) {
+        let emp = empleados[i];
+        tabla += "<tr>";
+        tabla += "<td>" + emp.cedula + "</td>";
+        tabla += "<td>" + emp.nombre + "</td>";
+        tabla += "<td>" + emp.apellido + "</td>";
+        tabla += "<td>" + emp.sueldo + "</td>";
+        tabla += "</tr>";
+    }
+    tabla += "</table>";
+
+    // Inserta la tabla en el contenedor correspondiente en el DOM
+    let cont = document.getElementById("tablaEmpleados");
+    if (cont) cont.innerHTML = tabla;
+};
+
+
+/* buscarEmpleados(cedula)
+   - Busca un empleado por su cédula dentro del arreglo `empleados`.
+   - Retorna el objeto empleado si lo encuentra, o null si no existe.
+   - Usada tanto para edición como para generar roles.
+*/
+buscarEmpleados = function (cedula) {
+    for (let i = 0; i < empleados.length; i++) {
+        if (empleados[i].cedula === cedula) {
+            return empleados[i];
+        }
+    }
+    return null;
+};
+
+
+
+/* ====================== NAVEGACIÓN ENTRE VISTAS ====================== */
+/* Estas funciones muestran/ocultan secciones del formulario.
+   Se asume que existen funciones auxiliares `mostrarComponente(id)` y
+   `ocultarComponente(id)` que manipulan la visibilidad del DOM.
+*/
+
+/* mostrarOpcionEmpleado()
+   - Muestra la vista para gestionar empleados.
+   - Oculta las vistas de rol y resumen.
+   - Actualiza la lista de empleados en pantalla y coloca los controles
+     en su estado inicial (deshabilitados).
+*/
+mostrarOpcionEmpleado = function () {
+    mostrarComponente("divEmpleado");
+    ocultarComponente("divRol");
+    ocultarComponente("divResumen");
+    mostrarEmpleados();
+    condicionesIniciales();
+};
+
+/* mostrarOpcionRol()
+   - Muestra la vista para gestionar roles (cálculos) y oculta las demás.
+*/
+mostrarOpcionRol = function () {
+    mostrarComponente("divRol");
+    ocultarComponente("divEmpleado");
+    ocultarComponente("divResumen");
+};
+
+/* mostrarOpcionResumen()
+   - Muestra la vista resumen (tabla de roles) y oculta las demás.
+*/
+mostrarOpcionResumen = function () {
+    mostrarComponente("divResumen");
+    ocultarComponente("divEmpleado");
+    ocultarComponente("divRol");
+};
+
+
+
+/* ====================== INICIALIZACIÓN DE CONTROLES ====================== */
+/* condicionesIniciales()
+   - Deja los controles del formulario de empleado en estado "inactivo"
+     (inputs deshabilitados y botón guardar deshabilitado).
+   - Se usan funciones auxiliares `deshabilitarComponente(id)` / `habilitarComponente(id)`.
+*/
+condicionesIniciales = function () {
+    deshabilitarComponente("txtCedula");
+    deshabilitarComponente("txtNombre");
+    deshabilitarComponente("txtApellido");
+    deshabilitarComponente("txtSueldo");
+    deshabilitarComponente("btnGuardar");
+};
+
+/* ejecutarNuevo()
+   - Prepara el formulario para crear un nuevo empleado: habilita inputs
+     y el botón guardar, y marca `esNuevo = true`.
+*/
+ejecutarNuevo = function () {
+    habilitarComponente("txtCedula");
+    habilitarComponente("txtNombre");
+    habilitarComponente("txtApellido");
+    habilitarComponente("txtSueldo");
+    habilitarComponente("btnGuardar");
+    esNuevo = true;
+};
+
+
+
+/* ====================== BÚSQUEDAS ====================== */
+
+/* ejecutarBusqueda()
+   - Busca un empleado por la cédula ingresada en el input "txtBusquedaCedula".
+   - Si lo encuentra, llena los inputs del formulario (txtCedula, txtNombre, txtApellido, txtSueldo)
+     y prepara el formulario para permitir edición (deshabilita txtCedula).
+   - Si no lo encuentra, muestra alerta.
+   - `recuperarTexto(id)` y `mostrarTextoEnCaja(id, valor)` son funciones auxiliares
+     esperadas en tu utilitarios.js.
+*/
+ejecutarBusqueda = function () {
+    let cedulaBuscar = recuperarTexto("txtBusquedaCedula");
+    if (!cedulaBuscar) {
+        alert("Ingrese una cédula para buscar");
+        return;
+    }
+    let empleado = buscarEmpleados(cedulaBuscar);
+    if (empleado == null) {
+        alert("EMPLEADO NO EXISTE");
+    } else {
+        // Mostrar datos en los inputs del formulario
+        mostrarTextoEnCaja("txtCedula", empleado.cedula);
+        mostrarTextoEnCaja("txtNombre", empleado.nombre);
+        mostrarTextoEnCaja("txtApellido", empleado.apellido);
+        mostrarTextoEnCaja("txtSueldo", empleado.sueldo);
+
+        // Habilitar edición de campos (excepto cédula)
+        habilitarComponente("txtNombre");
+        habilitarComponente("txtApellido");
+        habilitarComponente("txtSueldo");
+        habilitarComponente("btnGuardar");
+
+        deshabilitarComponente("txtCedula");
+
+        esNuevo = false; // estamos en edición
+    }
+};
+
+
+
+/* ejecutarBusquedaRol()
+   - Busca un empleado por cédula (campo txtBusquedaCedulaRol) para generar un rol.
+   - Si lo encuentra, muestra la información del empleado en la vista de rol (divRol),
+     prepara los campos (ej. habilita btnGuardarRol) y muestra mensaje.
+   - Usa funciones auxiliares: mostrarTexto(id, texto) para poner texto en divs/labels.
+*/
+ejecutarBusquedaRol = function () {
+    let cedulaBuscar = recuperarTexto("txtBusquedaCedulaRol");
+    if (!cedulaBuscar) {
+        alert("Ingrese una cédula para buscar");
+        return;
+    }
+    let empleado = buscarEmpleados(cedulaBuscar);
+    if (empleado == null) {
+        alert("Empleado no encontrado");
+        return;
+    }
+
+    // Mostrar datos del empleado en la vista rol (infoCedula, infoNombre, infoSueldo)
+    mostrarTexto("infoCedula", empleado.cedula);
+    mostrarTexto("infoNombre", (empleado.nombre || "") + " " + (empleado.apellido || ""));
+
+    // Asegurar que el sueldo se muestre con 2 decimales si es número
+    let sueldoTexto = (typeof empleado.sueldo === "number") ? empleado.sueldo.toFixed(2) : empleado.sueldo;
+    mostrarTexto("infoSueldo", sueldoTexto);
+
+    mostrarMensaje("Empleado encontrado");
+
+    // Habilitar botón guardar rol si existe
+    let btnR = document.getElementById("btnGuardarRol");
+    if (btnR) btnR.disabled = false;
+};
+
+
+
+/* ====================== CÁLCULOS (APORTES y VALOR A PAGAR) ====================== */
+
+/* calcularAporteEmpleado(sueldo)
+   - Calcula el aporte del empleado (ej.: 9.45% -> 0.0945).
+   - Devuelve un número con 2 decimales (parseFloat(...toFixed(2)) para consistencia).
+*/
+calcularAporteEmpleado = function (sueldo) {
+    let aporte = sueldo * 0.0945;
+    return parseFloat(aporte.toFixed(2));
+};
+
+/* calcularAporteEmpleador(sueldo)
+   - Calcula el aporte del empleador (ej.: 11.15% -> 0.1115).
+*/
+calcularAporteEmpleador = function (sueldo) {
+    let aporte = sueldo * 0.1115;
+    return parseFloat(aporte.toFixed(2));
+};
+
+/* calcularValorAPagar(sueldo, aporteIess, descuento)
+   - Resta al sueldo bruto el aporte del empleado y otros descuentos para obtener valor a pagar.
+*/
+calcularValorAPagar = function (sueldo, aporteIess, descuento) {
+    let valorPagar = sueldo - aporteIess - descuento;
+    return parseFloat(valorPagar.toFixed(2));
+};
+
+
+
+/* calcularRol()
+   - Lee el sueldo mostrado en la vista (infoSueldo) y el descuento ingresado (txtDescuentos).
+   - Valida datos y calcula:
+       * aporteIess (empleado)
+       * valor a pagar
+   - Muestra los resultados en los elementos infoIESS e infoPago.
+   - Funciones auxiliares esperadas:
+       - recuperarFloatDiv(id) -> obtiene número desde un div (ej. "infoSueldo")
+       - recuperarFloat(id) -> obtiene número desde un input (ej. "txtDescuentos")
+*/
+calcularRol = function () {
+    let sueldo = recuperarFloatDiv("infoSueldo"); // salario mostrado en div
+    let descuento = recuperarFloat("txtDescuentos"); // input en tu HTML
+
+    // Validaciones básicas de entrada
+    if (isNaN(sueldo) || sueldo <= 0) {
+        alert("Debe existir un sueldo válido (busque un empleado primero).");
+        return;
+    }
+
+    if (isNaN(descuento) || descuento < 0 || descuento > sueldo) {
+        alert("El descuento debe ser un número mayor o igual a 0 y menor o igual al sueldo.");
+        return;
+    }
+
+    // Cálculos
+    let aporteIess = calcularAporteEmpleado(sueldo);
+    mostrarTexto("infoIESS", aporteIess.toFixed(2));
+
+    let valorPagar = calcularValorAPagar(sueldo, aporteIess, descuento);
+    mostrarTexto("infoPago", valorPagar.toFixed(2));
+};
+
+
+
+/* ====================== ROLES: GUARDAR y MOSTRAR ====================== */
+
+/* guardarRol()
+   - Reúne la información de la vista rol (cedula, nombre, sueldo, descuento),
+     calcula los aportes y arma un objeto `nuevoRol`.
+   - Agrega el rol al arreglo `roles`, muestra mensaje de confirmación,
+     deshabilita btnGuardarRol (para evitar duplicados) y actualiza la tabla y totales.
+   - Convenciones:
+       * recuperarTextoDiv(id) -> lee texto desde un elemento div/label.
+       * recuperarFloatDiv/recuperarFloat -> leen números desde DOM.
+*/
+guardarRol = function () {
+    // Obtener cedula (desde div infoCedula o desde el input de búsqueda)
+    let cedula = recuperarTextoDiv("infoCedula") || recuperarTexto("txtBusquedaCedulaRol");
+    if (!cedula) {
+        alert("No hay empleado seleccionado para guardar el rol.");
+        return;
+    }
+
+    let nombre = recuperarTextoDiv("infoNombre");
+    let sueldo = recuperarFloatDiv("infoSueldo");
+    let descuento = recuperarFloat("txtDescuentos");
+
+    if (isNaN(sueldo) || sueldo <= 0) {
+        alert("Sueldo inválido.");
+        return;
+    }
+    if (isNaN(descuento) || descuento < 0) descuento = 0;
+
+    // Calcular aportes y valor a pagar
+    let aporteEmpleado = calcularAporteEmpleado(sueldo);
+    let aporteEmpleador = calcularAporteEmpleador(sueldo);
+    let valorPagar = calcularValorAPagar(sueldo, aporteEmpleado, descuento);
+
+    // Construir el objeto rol (guardando valores como strings con 2 decimales para consistencia visual)
+    let nuevoRol = {
+        cedula: cedula,
+        nombre: nombre,
+        sueldo: sueldo,
+        descuento: descuento,
+        aporteEmpleado: aporteEmpleado.toFixed(2),
+        aporteEmpleador: aporteEmpleador.toFixed(2),
+        valorPagar: valorPagar.toFixed(2)
+    };
+
+    // Agregar al arreglo de roles
+    roles.push(nuevoRol);
+    mostrarMensaje("✅ Rol guardado correctamente");
+    console.log("Arreglo roles:", roles);
+
+    // Deshabilitar botón hasta nueva búsqueda
+    let btnR = document.getElementById("btnGuardarRol");
+    if (btnR) btnR.disabled = true;
+
+    // Actualizar vista resumen y totales
+    mostrarRoles();
+    mostrarTotales();
+};
+
+
+
+/* mostrarRoles()
+   - Genera una tabla con los roles guardados (cédula, nombre, valor a pagar, aportes)
+   - Inserta la tabla en el elemento con id "tablaResumen".
+*/
+mostrarRoles = function () {
+    let tabla = `
+        <table border="1" cellspacing="0" cellpadding="5">
+            <tr>
+                <th>CÉDULA</th>
+                <th>NOMBRE</th>
+                <th>VALOR A PAGAR</th>
+                <th>APORTE EMPLEADO</th>
+                <th>APORTE EMPLEADOR</th>
+            </tr>
+    `;
+
+    for (let rol of roles) {
+        tabla += `
+            <tr>
+                <td>${rol.cedula}</td>
+                <td>${rol.nombre}</td>
+                <td>${rol.valorPagar}</td>
+                <td>${rol.aporteEmpleado}</td>
+                <td>${rol.aporteEmpleador}</td>
+            </tr>
+        `;
+    }
+
+    tabla += "</table>";
+    let cont = document.getElementById("tablaResumen");
+    if (cont) cont.innerHTML = tabla;
+};
+
+
+
+/* mostrarTotales()
+   - Suma todos los aportes y valores a pagar de `roles`
+   - Coloca los totales en elementos del DOM:
+       * infoTotalPago, infoAporteEmpresa, infoAporteEmpleado
+*/
+mostrarTotales = function () {
+    let totalEmpleado = 0, totalEmpleador = 0, totalPagar = 0;
+
+    // Sumar los valores (parseFloat por si los valores están como texto)
+    for (let rol of roles) {
+        totalEmpleado += parseFloat(rol.aporteEmpleado || 0);
+        totalEmpleador += parseFloat(rol.aporteEmpleador || 0);
+        totalPagar += parseFloat(rol.valorPagar || 0);
+    }
+
+    // Actualizar elementos del DOM si existen
+    let elTotalPago = document.getElementById("infoTotalPago");
+    let elAporteEmpresa = document.getElementById("infoAporteEmpresa");
+    let elAporteEmpleado = document.getElementById("infoAporteEmpleado");
+
+    if (elTotalPago) elTotalPago.innerText = totalPagar.toFixed(2);
+    if (elAporteEmpresa) elAporteEmpresa.innerText = totalEmpleador.toFixed(2);
+    if (elAporteEmpleado) elAporteEmpleado.innerText = totalEmpleado.toFixed(2);
+};
+
+
+
+/* ====================== EMPLEADOS: agregar / guardar ====================== */
+
+/* agregarEmpleado(empleado)
+   - Agrega el objeto `empleado` al arreglo `empleados` si no existe otra
+     cuenta con la misma cédula. Retorna true si se agregó, false si ya existía.
+*/
+agregarEmpleado = function (empleado) {
+    let existente = buscarEmpleados(empleado.cedula);
+    if (existente === null) {
+        empleados.push(empleado);
+        return true;
+    } else {
+        return false;
+    }
+};
+
+
+/* guardar()
+   - Función que se ejecuta al presionar el botón guardar en la vista EMPLEADO.
+   - Valida campos (cédula, nombre, apellido, sueldo), muestra errores en labels
+     (`lblErrorCedula`, `lblErrorNombre`, `lblErrorApellido`, `lblErrorSueldo`) y
+     en caso de ser correcto crea o modifica el empleado según `esNuevo`.
+   - Validaciones específicas:
+       * cédula: exactamente 10 dígitos numéricos
+       * nombre y apellido: al menos 3 caracteres y solo letras mayúsculas (A-Z)
+       * sueldo: número entre 400 y 5000
+*/
+guardar = function () {
+    // Recuperar valores desde inputs
+    let cedula = document.getElementById("txtCedula").value.trim();
+    let nombre = document.getElementById("txtNombre").value.trim();
+    let apellido = document.getElementById("txtApellido").value.trim();
+    let sueldoStr = document.getElementById("txtSueldo").value.trim();
+
+    let errores = false;
+
+    // Limpiar mensajes previos
+    document.getElementById("lblErrorCedula").innerText = "";
+    document.getElementById("lblErrorNombre").innerText = "";
+    document.getElementById("lblErrorApellido").innerText = "";
+    document.getElementById("lblErrorSueldo").innerText = "";
+
+    // Validar cédula: longitud y numérico
+    if (cedula.length !== 10 || isNaN(cedula)) {
+        document.getElementById("lblErrorCedula").innerText = "La cedula debe tener exactamente 10 dígitos numericos.";
+        errores = true;
+    }
+
+    // Validar nombre: al menos 3 letras mayúsculas (A-Z). Regex ^[A-Z]+$ exige solo mayúsculas sin espacios.
+    if (nombre.length < 3 || !/^[A-Z]+$/.test(nombre)) {
+        document.getElementById("lblErrorNombre").innerText = "El nombre debe tener al menos 3 letras mayusculas (A-Z).";
+        errores = true;
+    }
+
+    // Validar apellido: criterios similares a nombre
+    if (apellido.length < 3 || !/^[A-Z]+$/.test(apellido)) {
+        document.getElementById("lblErrorApellido").innerText = "El apellido debe tener al menos 3 letras mayusculas (A-Z).";
+        errores = true;
+    }
+
+    // Validar sueldo: debe ser número y estar dentro del rango permitido
+    let sueldo = parseFloat(sueldoStr);
+    if (isNaN(sueldo)) {
+        document.getElementById("lblErrorSueldo").innerText = "El sueldo debe ser un numero.";
+        errores = true;
+    } else if (sueldo < 400 || sueldo > 5000) {
+        document.getElementById("lblErrorSueldo").innerText = "El sueldo debe estar entre 400 y 5000.";
+        errores = true;
+    }
+
+    // Si hubo errores, salir sin guardar
+    if (errores) {
+        return;
+    }
+
+    // Si estamos en modo "nuevo", agregar empleado; si no, modificar existente
+    if (esNuevo) {
+        let nuevoEmpleado = {
+            cedula: cedula,
+            nombre: nombre,
+            apellido: apellido,
+            sueldo: sueldo
+        };
+
+        let agregado = agregarEmpleado(nuevoEmpleado);
+
+        if (agregado) {
+            alert("EMPLEADO GUARDADO CORRECTAMENTE");
+            mostrarEmpleados();
+            condicionesIniciales(); // volver al estado inicial
+        } else {
+            alert(" YA EXISTE UN EMPLEADO CON LA CEDULA " + cedula);
+        }
+    } else {
+        // Edición: buscar el empleado por la cédula del campo txtCedula y actualizar
+        let empleado = buscarEmpleados(document.getElementById("txtCedula").value);
+        if (empleado != null) {
+            empleado.nombre = recuperarTexto("txtNombre");
+            empleado.apellido = recuperarTexto("txtApellido");
+            empleado.sueldo = recuperarFloat("txtSueldo");
+
+            alert("EMPLEADO MODIFICADO EXITOSAMENTE");
+
+            mostrarEmpleados();
+            condicionesIniciales();
+        }
+    }
+};
+
+
+
+/* limpiar()
+   - Limpia los inputs del formulario EMPLEADO y vuelve a condiciones iniciales.
+*/
+limpiar = function () {
+    mostrarTextoEnCaja("txtBusquedaCedula", "");
+    mostrarTextoEnCaja("txtCedula", "");
+    mostrarTextoEnCaja("txtNombre", "");
+    mostrarTextoEnCaja("txtApellido", "");
+    mostrarTextoEnCaja("txtSueldo", "");
+
+    esNuevo = false;
+
+    condicionesIniciales();
+};
+
+
+
+/* validarGuardarRol()
+   - Función que habilita o deshabilita el botón de guardar empleado (btnGuardar)
+     según la presencia de valores en los campos obligatorios (txtCedula, txtNombre, txtSueldo).
+   - Se la usa como event listener en los inputs para hacer validación en tiempo real.
+*/
+validarGuardarRol = function () {
+    let cedula = document.getElementById("txtCedula");
+    let nombre = document.getElementById("txtNombre");
+    let sueldo = document.getElementById("txtSueldo");
+
+    let btn = document.getElementById("btnGuardar");
+    if (!btn) return;
+
+    if (!cedula || !nombre || !sueldo) {
+        btn.disabled = true;
+        return;
+    }
+
+    if (cedula.value.trim() === "" || nombre.value.trim() === "" || sueldo.value.trim() === "") {
+        btn.disabled = true;
+    } else {
+        btn.disabled = false;
+    }
+};
+
+
+
+/* mostrarMensaje(texto)
+   - Muestra mensajes breves en un label (lblMensaje) si existe.
+   - Útil para comunicar estados al usuario sin usar alert.
+*/
+mostrarMensaje = function (texto) {
+    let lbl = document.getElementById("lblMensaje");
+    if (lbl) lbl.innerText = texto;
+};
+
+
+
+/* ====================== ONLOAD (arranque) ====================== */
+/* Código que se ejecuta cuando la página termina de cargar:
+   - Muestra la vista de rol por defecto.
+   - Deshabilita botones que deben empezar inactivos.
+   - Añade listeners a inputs para validación en tiempo real.
+*/
+window.onload = function () {
+    // Mostrar vista por defecto (Rol)
+    mostrarOpcionRol();
+
+    // Botones: deshabilitar por seguridad hasta que haya datos válidos
+    let btn = document.getElementById("btnGuardar");
+    if (btn) btn.disabled = true;
+
+    let btnRol = document.getElementById("btnGuardarRol");
+    if (btnRol) btnRol.disabled = true;
+
+    // Listeners defensivos: vigilar cambios en inputs para validar habilitación de botón
+    if (document.getElementById("txtCedula")) {
+        document.getElementById("txtCedula").addEventListener("input", validarGuardarRol);
+    }
+    if (document.getElementById("txtNombre")) {
+        document.getElementById("txtNombre").addEventListener("input", validarGuardarRol);
+    }
+    if (document.getElementById("txtSueldo")) {
+        document.getElementById("txtSueldo").addEventListener("input", validarGuardarRol);
+    }
+};
