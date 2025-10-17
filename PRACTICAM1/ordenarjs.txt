@@ -1,0 +1,176 @@
+// ==========================================================
+// Programa: Gestión de Objetos con precios
+// Descripción: Permite agregar objetos con su precio a una lista,
+//              mostrarlos en una tabla HTML, y determinar cuál
+//              tiene el precio mayor o menor.
+// ==========================================================
+
+// --- Arreglo inicial con algunos objetos y sus precios ---
+let cosas = [
+    { objeto: "Leche", precio: 2 },
+    { objeto: "huevos", precio: 4 },
+    { objeto: "Pan", precio: 1 },
+    { objeto: "Avena", precio: 5 },
+    { objeto: "Roscas", precio: 7 }
+];
+
+// ==========================================================
+// FUNCIÓN: agregarObjeto()
+// Descripción: Permite agregar un nuevo objeto con su precio
+//              al arreglo "cosas", validando que los datos sean correctos.
+// ==========================================================
+agregarObjeto = function () {
+
+    // --- Obtiene el valor escrito en las cajas de texto HTML ---
+    let objeto = document.getElementById("txtObjeto").value.trim();
+    let precio = document.getElementById("txtPrecio").value.trim();
+
+    // --- Validación: el nombre del objeto debe tener al menos 3 caracteres ---
+    if (objeto.length < 3) {
+        mostrarTexto("errorObjeto", "El nombre debe tener al menos 3 caracteres");
+        return; // Si no cumple, detiene la función
+    } else {
+        mostrarTexto("errorObjeto", " "); // Limpia el mensaje de error
+    }
+
+    // --- Convierte el texto a número entero ---
+    precio = parseInt(precio);
+
+    // --- Validación: el precio debe ser un número válido entre 1 y 100 ---
+    if (isNaN(precio) || precio <= 0 || precio > 100) {
+        mostrarTexto("errorPrecio", "El precio que ingresó es incorrecto");
+        return; // Si no cumple, detiene la función
+    } else {
+        mostrarTexto("errorPrecio", " "); // Limpia el mensaje de error
+    }
+
+    // --- Crea un nuevo objeto con los valores ingresados ---
+    let nuevoObjeto = {
+        objeto: objeto,
+        precio: precio
+    };
+
+    // --- Agrega el nuevo objeto al arreglo principal ---
+    cosas.push(nuevoObjeto);
+
+    // --- Muestra mensajes de confirmación ---
+    alert("OBJETO AGREGADO CORRECTAMENTE");
+    mostrarTexto("mensajeFinal", "OBJETO AGREGADO CORRECTAMENTE");
+
+    // --- Actualiza la tabla en pantalla con el nuevo objeto ---
+    mostrarObjetos();
+
+    // --- Limpia las cajas de texto para ingresar nuevos datos ---
+    document.getElementById("txtObjeto").value = "";
+    document.getElementById("txtPrecio").value = "";
+};
+
+// ==========================================================
+// FUNCIÓN: mostrarObjetos()
+// Descripción: Genera una tabla HTML mostrando todos los
+//              objetos del arreglo "cosas" con sus precios.
+// ==========================================================
+mostrarObjetos = function () {
+    // --- Inicia la estructura de la tabla ---
+    let tabla = "<table class='tabla-personas'>";
+    tabla += "<tr><th>OBJETO</th> <th>PRECIO</th></tr>";
+
+    // --- Recorre el arreglo y agrega cada objeto como fila de la tabla ---
+    for (let i = 0; i < cosas.length; i++) {
+        tabla += "<tr>";
+        tabla += "<td>" + cosas[i].objeto + "</td>";
+        tabla += "<td>" + cosas[i].precio + "</td>";
+        tabla += "</tr>";
+    }
+
+    // --- Cierra la tabla ---
+    tabla += "</table>";
+
+    // --- Inserta la tabla dentro del elemento HTML con id 'tablaObjetos' ---
+    document.getElementById("tablaObjetos").innerHTML = tabla;
+};
+
+// ==========================================================
+// EVENTO: Cargar página
+// Descripción: Cuando la página termina de cargar, se muestra
+//              automáticamente la tabla inicial de objetos.
+// ==========================================================
+window.addEventListener("load", function () {
+    mostrarObjetos();
+});
+
+// ==========================================================
+// FUNCIÓN: objetoMayor()
+// Descripción: Busca dentro del arreglo "cosas" el objeto con
+//              el precio más alto y lo retorna.
+// ==========================================================
+objetoMayor = function () {
+
+    // --- Si el arreglo está vacío, retorna null ---
+    if (!cosas || cosas.length === 0) {
+        return null;
+    }
+
+    // --- Toma el primer elemento como punto de comparación ---
+    let objetoMayor = cosas[0];
+    let elementoObjeto;
+
+    // --- Recorre el arreglo para buscar el precio mayor ---
+    for (let i = 1; i < cosas.length; i++) {
+        elementoObjeto = cosas[i];
+        if (elementoObjeto.precio > objetoMayor.precio) {
+            objetoMayor = elementoObjeto;
+        }
+    }
+
+    // --- Devuelve el objeto con el precio mayor ---
+    return objetoMayor;
+};
+
+// ==========================================================
+// FUNCIÓN: determinarMayor()
+// Descripción: Llama a "objetoMayor()" y muestra en pantalla
+//              cuál es el objeto con el precio más alto.
+// ==========================================================
+determinarMayor = function () {
+    let encontrarMayor = objetoMayor();
+    mostrarTexto("resultadoMayor", "El objeto mayor es: " + encontrarMayor.objeto + " (" + encontrarMayor.precio + " precio)");
+};
+
+// ==========================================================
+// FUNCIÓN: objetoMenor()
+// Descripción: Busca dentro del arreglo "cosas" el objeto con
+//              el precio más bajo y lo retorna.
+// ==========================================================
+objetoMenor = function () {
+
+    // --- Si el arreglo está vacío, retorna null ---
+    if (!cosas || cosas.length === 0) {
+        return null;
+    }
+
+    // --- Toma el primer elemento como punto de comparación ---
+    let obtenerMenor = cosas[0];
+    let elementoObjeto;
+
+    // --- Recorre el arreglo para encontrar el menor precio ---
+    for (let i = 0; i < cosas.length; i++) {
+        elementoObjeto = cosas[i];
+        if (elementoObjeto.precio < obtenerMenor.precio) {
+            obtenerMenor = elementoObjeto;
+        }
+    }
+
+    // --- Devuelve el objeto con el precio menor ---
+    return obtenerMenor;
+};
+
+// ==========================================================
+// FUNCIÓN: determinarMenor()
+// Descripción: Llama a "objetoMenor()" y muestra en pantalla
+//              cuál es el objeto con el precio más bajo.
+// ==========================================================
+determinarMenor = function () {
+    let encontrarMenor = objetoMenor();
+    mostrarTexto("resultadoMenor", "El objeto menor es: " + encontrarMenor.objeto + " (" + encontrarMenor.precio + " precio)");
+};

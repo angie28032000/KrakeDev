@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="utilitarios.js " defer></script>
+    <script src="ordenar.js" defer></script>
+    <link rel="stylesheet" href="ordenar.css">
+
+</head>
+
+<body onload="mostrarObjetos();">
+    <div id="resultado"></div>
+    <div class="campo">
+
+        <div class="campo">
+            <label>OBJETO</label>
+            <input type="text" id="txtObjeto">
+            <div id="errorObjeto" class="error"></div>
+
+        </div>
+
+        <div class="campo">
+            <label>PRECIOS</label>
+            <input type="text" id="txtPrecio">
+            <div id="errorPrecio" class="error"></div>
+
+        </div>
+
+
+
+        <div class="contenedor">
+            <h2>LISTADO DE COSAS</h2>
+            <div id="tablaObjetos"></div>
+            <div id="mensajeFinal" class="mensaje"></div>
+            <div id="resultadoMayor" class="mensaje">
+                </di>
+                <div id="resultadoMenor" class="mensaje"> </div>
+
+                    <hr>
+                    <input type="button" class="boton" value="GUARDAR" onclick="agregarObjeto();">
+                    <input type="button" class="boton" value="MAYOR" onclick="determinarMayor();">
+                    <input type="button" class="boton" value="MENOR" onclick="determinarMenor();">
+
+
+                </div>
+
+        </div>
+
+
+</body>
+
+</html>
