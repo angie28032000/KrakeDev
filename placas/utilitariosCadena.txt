@@ -1,0 +1,67 @@
+// ================================================
+// FUNCIONES AUXILIARES PARA VALIDAR CARACTERES
+// ================================================
+
+// ------------------------------------------------
+// Función: esMayuscula
+// Verifica si el carácter recibido es una letra MAYÚSCULA (A–Z).
+// ------------------------------------------------
+esMayuscula = function (caracter) {
+
+    // Si el texto tiene más de un carácter, no es válido
+    if (caracter.length !== 1) {
+        return false; 
+    }
+
+    // Se obtiene el código ASCII del carácter
+    let codigo = caracter.charCodeAt(0);
+
+    // En el código ASCII:
+    // A = 65  y  Z = 90
+    // Si está en ese rango, es una letra mayúscula
+    return codigo >= 65 && codigo <= 90; 
+}
+
+
+
+// ------------------------------------------------
+// Función: esDigito
+// Verifica si el carácter recibido es un número (0–9).
+// ------------------------------------------------
+esDigito = function (caracter) {
+
+    // Se valida que solo haya un carácter
+    if (caracter.length !== 1) {
+        return false;
+    }
+
+    // Se obtiene el código ASCII del carácter
+    let codigo = caracter.charCodeAt(0);
+
+    // En el código ASCII:
+    // 0 = 48  y  9 = 57
+    // Si está en ese rango, es un dígito numérico
+    return codigo >= 48 && codigo <= 57; 
+}
+
+
+
+// ------------------------------------------------
+// Función: esGuion
+// Verifica si el carácter recibido es un guion (-).
+// ------------------------------------------------
+esGuion = function (caracter) {
+
+    // Se valida que solo haya un carácter
+    if (caracter.length !== 1) {
+        return false;
+    }
+
+    // Se obtiene el código ASCII del carácter
+    let codigo = caracter.charCodeAt(0);
+
+    // En el código ASCII:
+    // El guion "-" tiene el valor 45
+    // Si coincide, devuelve true
+    return codigo === 45; 
+}

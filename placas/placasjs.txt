@@ -1,0 +1,98 @@
+// ==========================================================
+// Programa: Validación e información de placa
+// Descripción: Valida la estructura de una placa, muestra el
+//              estado (válida/incorrecta), los errores si los hay,
+//              y extrae/proyecta información como provincia,
+//              tipo de vehículo y día de pico y placa.
+// ==========================================================
+
+// ----------------------------------------------------------
+// FUNCIÓN: validarPlaca()
+// Descripción:
+//   - Toma la placa ingresada en el input con id "txtPlaca".
+//   - Llama a la función validarEstructura(placa) para comprobar
+//     si la placa tiene la forma correcta (retorna null si OK,
+//     o una cadena con los errores si no).
+//   - Si la estructura es válida, extrae y muestra:
+//       * Provincia (obtenerProvincia)
+//       * Tipo de vehículo (obtenerTipoVehiculo)
+//       * Día de pico y placa (obtenerDiaPicoYPlaca)
+//   - Si hay errores de estructura, muestra el estado y los errores.
+// Notas:
+//   - Esta función asume que existen en el mismo archivo o en otro
+//     las funciones: validarEstructura, obtenerProvincia,
+//     obtenerTipoVehiculo y obtenerDiaPicoYPlaca.
+//   - Los elementos HTML esperados (por id) son:
+//       txtPlaca, estado, errores, provincia, tipoVehiculo, picoPlaca
+// ----------------------------------------------------------
+validarPlaca = function() {
+    // --- Obtiene la placa ingresada y remueve espacios al inicio/fin ---
+    let placa = document.getElementById("txtPlaca").value.trim();
+
+    // --- Valida la estructura de la placa (función externa esperada) ---
+    // validarEstructura debe devolver:
+    //   null -> si la estructura es válida
+    //   "texto de error" -> si hay errores (puede ser una lista o cadena)
+    let erroresEstructura = validarEstructura(placa);
+
+    // --- Referencias a elementos HTML donde mostraremos resultados ---
+    let estado = document.getElementById("estado");
+    let errores = document.getElementById("errores");
+    let provincia = document.getElementById("provincia");
+    let tipoVehiculo = document.getElementById("tipoVehiculo");
+    let picoPlaca = document.getElementById("picoPlaca");
+
+    // --- Limpiamos posibles mensajes previos antes de escribir nuevos ---
+    errores.innerHTML = "";
+    provincia.innerHTML = "";
+    tipoVehiculo.innerHTML = "";
+    picoPlaca.innerHTML = "";
+
+    // --- Si validarEstructura devolvió null => ESTRUCTURA VÁLIDA ---
+    if (erroresEstructura === null) {
+        // Mostramos estado válido
+        estado.innerHTML = "ESTRUCTURA VÁLIDA";
+
+        // --- Obtener y mostrar la provincia (si la función devuelve algo) ---
+        // obtenerProvincia(placa) debe devolver el nombre de la provincia
+        // o un valor falsy si no se puede determinar.
+        let prov = obtenerProvincia(placa);
+        provincia.innerHTML = prov ? "Provincia: " + prov : "Provincia incorrecta.";
+
+        // --- Obtener y mostrar el tipo de vehículo ---
+        let tipo = obtenerTipoVehiculo(placa);
+        tipoVehiculo.innerHTML = tipo ? "Tipo: " + tipo : "Tipo de vehículo incorrecto.";
+
+        // --- Obtener y mostrar el día de pico y placa (si aplica) ---
+        // obtenerDiaPicoYPlaca puede devolver el día (ej. "Lunes") o null/false.
+        let dia = obtenerDiaPicoYPlaca(placa);
+        picoPlaca.innerHTML = dia ? "Día de Pico y Placa: " + dia : "No aplica pico y placa.";
+    } else {
+        // --- Si hay errores de estructura, mostramos estado e información de error ---
+        estado.innerHTML = "ESTRUCTURA INCORRECTA";
+        // erroresEstructura puede ser una cadena con mensajes (o HTML seguro).
+        errores.innerHTML = erroresEstructura;
+    }
+};
+
+// ----------------------------------------------------------
+// FUNCIÓN: limpiar()
+// Descripción:
+//   - Limpia el campo de texto de placa y todos los mensajes/resultados
+//     que se muestran en los elementos con ids: estado, errores,
+//     provincia, tipoVehiculo y picoPlaca.
+// Uso:
+//   - Útil para reiniciar el formulario o cuando el usuario desea
+//     ingresar otra placa sin tener que borrar manualmente.
+// ----------------------------------------------------------
+function limpiar() {
+    // Limpia el campo de texto donde el usuario escribe la placa
+    document.getElementById("txtPlaca").value = "";
+
+    // Limpia todos los elementos donde se muestran mensajes
+    document.getElementById("estado").innerHTML = "";
+    document.getElementById("errores").innerHTML = "";
+    document.getElementById("provincia").innerHTML = "";
+    document.getElementById("tipoVehiculo").innerHTML = "";
+    document.getElementById("picoPlaca").innerHTML = "";
+}

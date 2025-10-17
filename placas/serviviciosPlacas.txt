@@ -1,0 +1,236 @@
+// ==========================================================
+// Programa: Utilidades para placas (Ecuador)
+// Descripción:
+//   - Determinar provincia a partir de la primera letra de la placa.
+//   - Validar la estructura de la placa (letras, guion, dígitos).
+//   - Obtener el tipo de vehículo según la segunda letra.
+//   - Calcular el día de "Pico y Placa" según el último dígito.
+// ==========================================================
+
+
+// ----------------------------------------------------------
+// FUNCIÓN AUXILIAR: esMayuscula(c)
+// Descripción: Devuelve true si el carácter 'c' es una letra
+//              mayúscula A-Z. (Si llega undefined o string vacío
+//              retorna false).
+// Uso: validar posiciones que deben ser letras mayúsculas.
+// ----------------------------------------------------------
+function esMayuscula(caracter) {
+    if (!caracter || caracter.length !== 1) return false;
+    let codigo = caracter.charCodeAt(0);
+    // Códigos ASCII: A = 65, Z = 90
+    return codigo >= 65 && codigo <= 90;
+}
+
+// ----------------------------------------------------------
+// FUNCIÓN AUXILIAR: esDigito(c)
+// Descripción: Devuelve true si el carácter 'c' es un dígito (0-9).
+// Uso: validar posiciones que deben ser números.
+// ----------------------------------------------------------
+function esDigito(caracter) {
+    if (!caracter || caracter.length !== 1) return false;
+    let codigo = caracter.charCodeAt(0);
+    // Códigos ASCII: '0' = 48, '9' = 57
+    return codigo >= 48 && codigo <= 57;
+}
+
+// ----------------------------------------------------------
+// FUNCIÓN AUXILIAR: esGuion(c)
+// Descripción: Devuelve true si el carácter 'c' es el símbolo '-'
+// Uso: validar la posición del guion en la placa.
+// ----------------------------------------------------------
+function esGuion(caracter) {
+    return caracter === "-";
+}
+
+
+// ==========================================================
+// FUNCIÓN: obtenerProvincia(placa)
+// Descripción:
+//   - Extrae la primera letra de la placa (posición 0),
+//     la convierte a mayúscula y devuelve el nombre de la
+//     provincia correspondiente según un mapeo predefinido.
+//   - Si no hay placa válida o la letra no corresponde a una
+//     provincia conocida, devuelve null.
+// Notas:
+//   - Se asume que la placa usa la convención de letras para
+//     provincias usada en Ecuador (una letra inicial).
+// ==========================================================
+obtenerProvincia = function (placa) {
+    // --- Validación básica: placa definida y no vacía ---
+    if (!placa || placa.length === 0) {
+        return null;
+    }
+
+    // --- Primera letra en mayúscula ---
+    let letra = placa[0].toUpperCase();
+
+    // --- Mapeo letra -> provincia (según convención utilizada) ---
+    let provincias = {
+        A: "Azuay",
+        B: "Bolívar",
+        C: "Carchi",
+        E: "Esmeraldas",
+        G: "Guayas",
+        H: "Chimborazo",
+        I: "Imbabura",
+        L: "Loja",
+        M: "Manabí",
+        N: "Napo",
+        O: "El Oro",
+        P: "Pichincha",
+        R: "Los Ríos",
+        S: "Morona Santiago",
+        T: "Tungurahua",
+        U: "Sucumbíos",
+        V: "Pastaza",
+        W: "Galápagos",
+        X: "Cotopaxi",
+        Y: "Santa Elena",
+        Z: "Zamora Chinchipe"
+    };
+
+    // --- Devuelve la provincia si existe en el mapa, sino null ---
+    return provincias[letra] || null;
+};
+
+
+// ==========================================================
+// FUNCIÓN: validarEstructura(placa)
+// Descripción:
+//   - Verifica paso a paso la estructura típica de una placa:
+//       1) longitud 7 u 8 caracteres
+//       2) las tres primeras posiciones son letras mayúsculas
+//       3) la cuarta posición es un guion '-'
+//       4) las últimas 3 o 4 posiciones son dígitos
+//   - Acumula mensajes de error en un arreglo y devuelve:
+//       * null -> si no hay errores (estructura válida)
+//       * string con los errores concatenados -> si hay fallos
+// Notas:
+//   - La función realiza validaciones parciales según la longitud
+//     antes de consultar cada posición, para evitar errores por
+//     índices fuera de rango.
+// ==========================================================
+validarEstructura = function (placa) {
+    let errores = [];
+
+    // --- Validar longitud mínima/máxima aceptada ---
+    if (placa.length !== 7 && placa.length !== 8) {
+        errores.push("La placa debe tener 7 u 8 caracteres.");
+    }
+
+    // --- Validar que la primera, segunda y tercera posición sean letras mayúsculas ---
+    if (placa.length >= 1 && !esMayuscula(placa[0])) {
+        errores.push("El primer carácter debe ser una letra mayúscula.");
+    }
+    if (placa.length >= 2 && !esMayuscula(placa[1])) {
+        errores.push("El segundo carácter debe ser una letra mayúscula.");
+    }
+    if (placa.length >= 3 && !esMayuscula(placa[2])) {
+        errores.push("El tercer carácter debe ser una letra mayúscula.");
+    }
+
+    // --- Validar que el cuarto carácter sea un guion '-' ---
+    if (placa.length >= 4 && !esGuion(placa[3])) {
+        errores.push("El cuarto carácter debe ser un guión (-).");
+    }
+
+    // --- Validar posiciones de dígitos (5°, 6°, 7° y opcional 8°) ---
+    if (placa.length >= 5 && !esDigito(placa[4])) {
+        errores.push("El quinto carácter debe ser un dígito.");
+    }
+    if (placa.length >= 6 && !esDigito(placa[5])) {
+        errores.push("El sexto carácter debe ser un dígito.");
+    }
+    if (placa.length >= 7 && !esDigito(placa[6])) {
+        errores.push("El séptimo carácter debe ser un dígito.");
+    }
+    if (placa.length === 8 && !esDigito(placa[7])) {
+        errores.push("El octavo carácter debe ser un dígito.");
+    }
+
+    // --- Si hay errores, los concatenamos en una sola cadena ---
+    if (errores.length > 0) {
+        return errores.join(" ");
+    } else {
+        // null = sin errores (convención usada en el resto del código)
+        return null;
+    }
+};
+
+
+// ==========================================================
+// FUNCIÓN: obtenerTipoVehiculo(placa)
+// Descripción:
+//   - Usa la segunda letra de la placa para identificar el tipo
+//     de vehículo según un mapeo predefinido.
+//   - Devuelve una cadena con el tipo o null si no aplica.
+// Notas:
+//   - Si la placa no tiene al menos 2 caracteres, retorna null.
+// ==========================================================
+obtenerTipoVehiculo = function(placa) {
+    if (!placa || placa.length < 2) {
+        return null;
+    }
+
+    // --- Segunda letra, convertida a mayúscula ---
+    let letra = placa[1].toUpperCase();
+
+    // --- Mapa letra -> tipo de vehículo ---
+    let tiposVehiculo = {
+        A: "Vehículo comercial",
+        Z: "Vehículo gubernamental",
+        E: "Vehículo de empresa pública",
+        X: "Vehículo diplomático",
+        M: "Vehículo municipal",
+        S: "Vehículo de uso oficial",
+        P: "Vehículo particular"
+    };
+
+    // --- Retorna el tipo si existe, si no null ---
+    return tiposVehiculo[letra] || null;
+};
+
+
+// ==========================================================
+// FUNCIÓN: obtenerDiaPicoYPlaca(placa)
+// Descripción:
+//   - Determina el día de "Pico y Placa" a partir del último
+//     dígito de la placa:
+//       1,2 -> Lunes
+//       3,4 -> Martes
+//       5,6 -> Miércoles
+//       7,8 -> Jueves
+//       9,0 -> Viernes
+//   - Si el último carácter no es dígito, devuelve null.
+// ==========================================================
+obtenerDiaPicoYPlaca = function(placa) {
+    if (!placa || placa.length === 0) {
+        return null;
+    }
+
+    // --- Tomar el último carácter de la placa ---
+    let ultimoCaracter = placa[placa.length - 1];
+
+    // --- Si no es dígito, no aplicaría pico y placa ---
+    if (!esDigito(ultimoCaracter)) {
+        return null;
+    }
+
+    // --- Convertir a número y decidir el día ---
+    let digito = parseInt(ultimoCaracter);
+
+    if (digito === 1 || digito === 2) {
+        return "Lunes";
+    } else if (digito === 3 || digito === 4) {
+        return "Martes";
+    } else if (digito === 5 || digito === 6) {
+        return "Miércoles";
+    } else if (digito === 7 || digito === 8) {
+        return "Jueves";
+    } else if (digito === 9 || digito === 0) {
+        return "Viernes";
+    } else {
+        return null;
+    }
+};
